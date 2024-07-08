@@ -19,7 +19,10 @@ modalBtn.forEach((btn) => btn.addEventListener("click", launchModal));
 // launch modal form
 function launchModal() {
   modalbg.style.display = "block";
+  resetForm();  // Add this line to reset the form when the modal is opened
+  console.log("opening form...");
 }
+
 
 const validForm = false;
 
@@ -71,32 +74,17 @@ function isValidName(name) {
   return nameRegex.test(name);
 }
 
-// Function to reset form fields
-function resetFormFields() {
-  document.getElementById("first").value = "";
-  document.getElementById("last").value = "";
-  document.getElementById("email").value = "";
-  document.getElementById("birthdate").value = "";
-  document.getElementById("quantity").value = "";
-  const locationRadios = document.querySelectorAll('input[name="location"]');
-  locationRadios.forEach(radio => radio.checked = false);
-  document.getElementById("checkbox1").checked = false;
-  document.getElementById("checkbox2").checked = false;
-}
-
 
 // Function to display success message after form submission
 function showSuccessMessage() {
   // Hide form elements
-  formData.forEach(element => {
-    element.style.display = "none";
-  });
+  const form= document.querySelector("body > main > div.bground > div > div > form");
+  form.style.display="none";
 
   // Clear existing content in the modal
   const modalContent = modalbg.querySelector(".content");
-  while (modalContent.firstChild) {
-    modalContent.removeChild(modalContent.firstChild);
-  }
+
+  
 
   // Create success message element
   const successMessage = document.createElement("p");
@@ -123,12 +111,18 @@ function showSuccessMessage() {
   modalContent.appendChild(closeButton);
 
   // Add click event listener to close the modal
-closeButton.addEventListener("click", function(event) {
-  event.preventDefault();
-  hideModal();
-  resetFormFields();
-  showForm(); // Show the form after closing the modal
-});
+  closeButton.addEventListener("click", function(event) {
+    event.preventDefault();
+    hideModal();
+    resetForm();  // Reset the form fields when the modal is closed
+    console.log("ok");
+   
+    form.style.display = "block";
+    successMessage.remove();
+    margin.remove();
+    closeButton.remove();
+  });
+  
 
 }
 
@@ -139,34 +133,32 @@ function hideModal() {
 }
 
 // Function to reset the form fields
+// Function to reset the form fields
 function resetForm() {
   document.getElementById("first").value = "";
   document.getElementById("last").value = "";
   document.getElementById("email").value = "";
   document.getElementById("birthdate").value = "";
   document.getElementById("quantity").value = "";
+  
   const locationRadios = document.querySelectorAll('input[name="location"]');
   locationRadios.forEach(radio => radio.checked = false);
+  
   document.getElementById("checkbox1").checked = false;
   document.getElementById("checkbox2").checked = false;
-}
 
-// Function to show the form and hide the success message
-function showForm() {
-  // Hide success message
-  const successMessage = modalbg.querySelector(".success-message");
-  if (successMessage) {
-    successMessage.remove();
-  }
+  console.log(document.getElementById("first").value);
+  console.log(document.getElementById("last").value);
+  console.log(document.getElementById("email").value);
+  console.log(document.getElementById("birthdate").value);
+  console.log(document.getElementById("quantity").value);
+  console.log(document.querySelector('input[name="location"]:checked'));
+  console.log(document.getElementById("checkbox1").checked);
+  console.log(document.getElementById("checkbox2").checked);
 
-  // Reset form fields
-  resetFormFields();
-
-  // Show form elements
   formData.forEach(element => {
     element.style.display = "block";
   });
-
 }
 
 
@@ -185,7 +177,7 @@ btnSubmit.addEventListener("click", function(event) {
   const location = document.querySelector('input[name="location"]:checked');
   const termsAccepted = document.getElementById("checkbox1").checked;
   const subscribeEvents = document.getElementById("checkbox2").checked;
-
+  console.log(firstName,lastName,email);
   let validForm = true;
 
   if (firstName.length < 2 || !isValidName(firstName)) {
