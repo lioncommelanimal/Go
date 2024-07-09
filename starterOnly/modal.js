@@ -19,37 +19,20 @@ modalBtn.forEach((btn) => btn.addEventListener("click", launchModal));
 // launch modal form
 function launchModal() {
   modalbg.style.display = "block";
-  resetForm();  // Add this line to reset the form when the modal is opened
-  console.log("opening form...");
+  resetForm();  // Reset the form when the modal is validated
 }
 
 
-const validForm = false;
+//Functions to verify user data
 
-// Display error message
-function showError(input, message) {
-  const error = document.createElement("p");
-  error.innerHTML = message;
-  error.className = "error-message";
-  error.style.color = "red";
-  error.style.fontSize = "14px";
-  input.parentElement.appendChild(error);
-  console.log("show error");
-}
-
-// Clear error messages
-function clearError() {
-  const errorMessages = document.querySelectorAll(".error-message");
-  errorMessages.forEach((msg) => msg.remove());
-  console.log("I clean error");
-}
-
-// Function to calculate age from birthdate
+// Function to verify age 
 function validateAge(birthdate) {
   const today = new Date();
   const birthDate = new Date(birthdate);
   let age = today.getFullYear() - birthDate.getFullYear();
   const monthDiff = today.getMonth() - birthDate.getMonth();
+
+  //Removes one year to age if the user is not 18 yet
   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
     age--;
   }
@@ -59,112 +42,22 @@ function validateAge(birthdate) {
   if (age > 130) {
     return "Veuillez renseigner un age valide";
   }
-  return "";
+  
 }
 
-// Function to validate email format
+// Function to verify email is valid
 function isValidEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   return emailRegex.test(email);
 }
 
-// Function to validate names contain only letters
+// Function to verify names contain only letters
 function isValidName(name) {
   const nameRegex = /^[A-Za-zÀ-ÖØ-öø-ÿ'-]+$/;
   return nameRegex.test(name);
 }
 
-
-// Function to display success message after form submission
-function showSuccessMessage() {
-  // Hide form elements
-  const form= document.querySelector("body > main > div.bground > div > div > form");
-  form.style.display="none";
-
-  // Clear existing content in the modal
-  const modalContent = modalbg.querySelector(".content");
-
-  
-
-  // Create success message element
-  const successMessage = document.createElement("p");
-  successMessage.innerHTML = "Merci pour<br/>votre inscription";
-  successMessage.className = "success-message";
-  successMessage.style.color = "white";
-  successMessage.style.fontSize = "20px";
-  successMessage.style.textAlign = "center";
-  successMessage.style.marginTop = "200px";
-  modalContent.appendChild(successMessage);
-
-  // Add margin between message and button
-  const margin = document.createElement("div");
-  margin.style.height = "40px"; // Adjust as needed for the margin size
-  modalContent.appendChild(margin);
-
-  // Create close button element
-  const closeButton = document.createElement("button");
-  closeButton.innerHTML = "Fermer";
-  closeButton.className = "btn-submit"; // Using the same class as the "C'est parti" button
-  closeButton.style.marginTop = "230px"; // Margin top for button
-  closeButton.style.marginBottom = "20px"
-  closeButton.style.display = "block"; // Ensure button is on a new line
-  modalContent.appendChild(closeButton);
-
-  // Add click event listener to close the modal
-  closeButton.addEventListener("click", function(event) {
-    event.preventDefault();
-    hideModal();
-    resetForm();  // Reset the form fields when the modal is closed
-    console.log("ok");
-   
-    form.style.display = "block";
-    successMessage.remove();
-    margin.remove();
-    closeButton.remove();
-  });
-  
-
-}
-
-
-// Function to hide the modal
-function hideModal() {
-  modalbg.style.display = "none";
-}
-
-// Function to reset the form fields
-// Function to reset the form fields
-function resetForm() {
-  document.getElementById("first").value = "";
-  document.getElementById("last").value = "";
-  document.getElementById("email").value = "";
-  document.getElementById("birthdate").value = "";
-  document.getElementById("quantity").value = "";
-  
-  const locationRadios = document.querySelectorAll('input[name="location"]');
-  locationRadios.forEach(radio => radio.checked = false);
-  
-  document.getElementById("checkbox1").checked = false;
-  document.getElementById("checkbox2").checked = false;
-
-  console.log(document.getElementById("first").value);
-  console.log(document.getElementById("last").value);
-  console.log(document.getElementById("email").value);
-  console.log(document.getElementById("birthdate").value);
-  console.log(document.getElementById("quantity").value);
-  console.log(document.querySelector('input[name="location"]:checked'));
-  console.log(document.getElementById("checkbox1").checked);
-  console.log(document.getElementById("checkbox2").checked);
-
-  formData.forEach(element => {
-    element.style.display = "block";
-  });
-}
-
-
-
-
-// Add event listener to the "btn-submit" button
+// Check the validity of user data
 btnSubmit.addEventListener("click", function(event) {
   event.preventDefault();
   clearError();
@@ -177,7 +70,7 @@ btnSubmit.addEventListener("click", function(event) {
   const location = document.querySelector('input[name="location"]:checked');
   const termsAccepted = document.getElementById("checkbox1").checked;
   const subscribeEvents = document.getElementById("checkbox2").checked;
-  console.log(firstName,lastName,email);
+  
   let validForm = true;
 
   if (firstName.length < 2 || !isValidName(firstName)) {
@@ -225,6 +118,104 @@ btnSubmit.addEventListener("click", function(event) {
   }
 
   if (validForm) {
+    console.log({
+      firstName: firstName,
+      lastName ,
+      email: email,
+      age: birthdate,
+      location: location.value,
+      nombreDeTournoi: quantity,
+      termsAccepted,
+    });
     showSuccessMessage();
   }
 });
+
+
+// Clear any previous error messages 
+function clearError() {
+  const errorMessages = document.querySelectorAll(".error-message");
+  errorMessages.forEach((msg) => msg.remove());
+}
+
+// Display error message if user data is invalid
+function showError(input, message) {
+  const error = document.createElement("p");
+  error.innerHTML = message;
+  error.className = "error-message";
+  error.style.color = "red";
+  error.style.fontSize = "14px";
+  input.parentElement.appendChild(error);
+}
+
+
+// Function to display success message after form submission
+
+function showSuccessMessage() {
+  // Hide any remaining form elements
+  const form= document.querySelector("body > main > div.bground > div > div > form");
+  form.style.display="none";
+
+  const modalContent = modalbg.querySelector(".content");
+
+  // Create success message element
+  const successMessage = document.createElement("p");
+  successMessage.innerHTML = "Merci pour<br/>votre inscription";
+  successMessage.className = "success-message";
+  successMessage.style.color = "white";
+  successMessage.style.fontSize = "20px";
+  successMessage.style.textAlign = "center";
+  successMessage.style.marginTop = "200px";
+  modalContent.appendChild(successMessage);
+
+  // Add margin between message and button
+  const margin = document.createElement("div");
+  margin.style.height = "40px"; 
+  modalContent.appendChild(margin);
+
+  // Create close button element
+  const closeButton = document.createElement("button");
+  closeButton.innerHTML = "Fermer";
+  closeButton.className = "btn-submit"; // Using the same class as the "C'est parti" button
+  closeButton.style.marginTop = "230px"; 
+  closeButton.style.marginBottom = "20px"
+  closeButton.style.display = "block"; 
+  modalContent.appendChild(closeButton);
+
+  // Add click event listener to close the modal
+    closeButton.addEventListener("click", function(event) {
+    event.preventDefault();
+    hideModal();
+    resetForm();  // Reset the form fields when the modal is closed
+    form.style.display = "block";
+    successMessage.remove();
+    closeButton.remove();
+  });
+}
+
+
+// Function to hide the modal
+function hideModal() {
+  modalbg.style.display = "none";
+}
+
+// Function to reset the form fields
+function resetForm() {
+  document.getElementById("first").value = "";
+  document.getElementById("last").value = "";
+  document.getElementById("email").value = "";
+  document.getElementById("birthdate").value = "";
+  document.getElementById("quantity").value = "";
+  const locationRadios = document.querySelectorAll('input[name="location"]');
+  locationRadios.forEach(radio => radio.checked = false);
+  document.getElementById("checkbox1").checked = false;
+  document.getElementById("checkbox2").checked = false;
+
+  formData.forEach(element => {
+    element.style.display = "block";
+  });
+}
+
+
+
+
