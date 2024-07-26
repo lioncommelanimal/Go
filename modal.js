@@ -1,4 +1,4 @@
-function editNav(){
+function editNav() {
   var x = document.getElementById("myTopnav");
   if (x.className === "topnav") {
     x.className += " responsive";
@@ -11,7 +11,8 @@ function editNav(){
 const modalbg = document.querySelector(".bground");
 const modalBtn = document.querySelectorAll(".modal-btn");
 const formData = document.querySelectorAll(".formData");
-const btnSubmit= document.querySelector(".btn-submit");
+const crossbtn = document.getElementById("crossbtn");
+const form = document.querySelector("form[name='reserve']");
 
 // launch modal event
 modalBtn.forEach((btn) => btn.addEventListener("click", launchModal));
@@ -19,11 +20,16 @@ modalBtn.forEach((btn) => btn.addEventListener("click", launchModal));
 // launch modal form
 function launchModal() {
   modalbg.style.display = "block";
-  resetForm();  // Reset the form when the modal is validated
+  resetForm();  // Reset the form when the modal is launched
 }
 
+// Close unsuccessful modal
+crossbtn.addEventListener("click", function(event) {
+  hideModal();
+  clearError(); // Clear error messages when modal is closed
+})
 
-//Functions to verify user data
+// Functions to verify user data
 
 // Function to verify age 
 function validateAge(birthdate) {
@@ -32,7 +38,7 @@ function validateAge(birthdate) {
   let age = today.getFullYear() - birthDate.getFullYear();
   const monthDiff = today.getMonth() - birthDate.getMonth();
 
-  //Removes one year to age if the user is not 18 yet
+  // Removes one year from age if the user is not 18 yet
   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
     age--;
   }
@@ -42,7 +48,6 @@ function validateAge(birthdate) {
   if (age > 130) {
     return "Veuillez renseigner un age valide";
   }
-  
 }
 
 // Function to verify email is valid
@@ -58,7 +63,7 @@ function isValidName(name) {
 }
 
 // Check the validity of user data
-btnSubmit.addEventListener("click", function(event) {
+form.addEventListener("submit", function(event) {
   event.preventDefault();
   clearError();
 
@@ -69,7 +74,6 @@ btnSubmit.addEventListener("click", function(event) {
   const quantity = document.getElementById("quantity").value;
   const location = document.querySelector('input[name="location"]:checked');
   const termsAccepted = document.getElementById("checkbox1").checked;
-  const subscribeEvents = document.getElementById("checkbox2").checked;
   
   let validForm = true;
 
@@ -120,7 +124,7 @@ btnSubmit.addEventListener("click", function(event) {
   if (validForm) {
     console.log({
       firstName: firstName,
-      lastName ,
+      lastName,
       email: email,
       age: birthdate,
       location: location.value,
@@ -130,7 +134,6 @@ btnSubmit.addEventListener("click", function(event) {
     showSuccessMessage();
   }
 });
-
 
 // Clear any previous error messages 
 function clearError() {
@@ -148,13 +151,10 @@ function showError(input, message) {
   input.parentElement.appendChild(error);
 }
 
-
 // Function to display success message after form submission
-
 function showSuccessMessage() {
   // Hide any remaining form elements
-  const form= document.querySelector("body > main > div.bground > div > div > form");
-  form.style.display="none";
+  form.style.display = "none";
 
   const modalContent = modalbg.querySelector(".content");
 
@@ -183,16 +183,16 @@ function showSuccessMessage() {
   modalContent.appendChild(closeButton);
 
   // Add click event listener to close the modal
-    closeButton.addEventListener("click", function(event) {
+  closeButton.addEventListener("click", function(event) {
     event.preventDefault();
     hideModal();
     resetForm();  // Reset the form fields when the modal is closed
+    clearError(); // Clear error messages when the modal is closed
     form.style.display = "block";
     successMessage.remove();
     closeButton.remove();
   });
 }
-
 
 // Function to hide the modal
 function hideModal() {
@@ -215,4 +215,3 @@ function resetForm() {
     element.style.display = "block";
   });
 }
-
